@@ -26,6 +26,20 @@ pool.connect()
         pool.query(createUsersTableQuery)
             .then(() => console.log("✅ Tabela 'users' criada com sucesso!"))
             .catch(err => console.error("❌ Erro ao criar tabela 'users':", err));
+        
+        const createProductsTableQuery = `
+        CREATE TABLE IF NOT EXISTS products (
+            id SERIAL PRIMARY KEY, 
+            name VARCHAR(100) NOT NULL,
+            category VARCHAR(100) NOT NULL, 
+            price DECIMAL(10, 2) NOT NULL,
+            image_url VARCHAR(100) NOT NULL
+            );
+        `;
+
+        pool.query(createProductsTableQuery)
+            .then(() => console.log("✅ Tabela 'users' criada com sucesso!"))
+            .catch(err => console.error("❌ Erro ao criar tabela 'users':", err));
 
         const createOrdersTableQuery = `
             CREATE TABLE IF NOT EXISTS orders (
