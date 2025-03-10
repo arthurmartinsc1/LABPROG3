@@ -1,16 +1,17 @@
-const { Pool } = require("pg");
+import pkg from 'pg';
+const { Pool } = pkg;
 
 const pool = new Pool({
-    user: "postgres",
-    host: "localhost",
-    database: "labprog3",
-    password: "amarelo100",
+    user: 'postgres',
+    host: 'localhost',
+    database: 'labprog3',
+    password: 'amarelo100',
     port: 5432, // Porta padrão do PostgreSQL
 });
 
 pool.connect()
     .then(() => {
-        console.log("✅ Conectado ao PostgreSQL!");
+        console.log('✅ Conectado ao PostgreSQL!');
 
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS users (
@@ -18,8 +19,7 @@ pool.connect()
                 name VARCHAR(100) NOT NULL,
                 email VARCHAR(100) NOT NULL UNIQUE,
                 password VARCHAR(100) NOT NULL,
-                birth_date DATE NOT NULL,
-                
+                birth_date DATE NOT NULL
             );
         `;
 
@@ -29,4 +29,4 @@ pool.connect()
     })
     .catch(err => console.error("❌ Erro na conexão:", err));
 
-module.exports = pool;
+export default pool;
