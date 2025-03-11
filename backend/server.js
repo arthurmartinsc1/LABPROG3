@@ -1,4 +1,4 @@
-import publicRoutes from "./routes/public.js"
+import authRoutes from "./routes/authRoutes.js"
 import privateRoutes from "./routes/private.js"
 import express from 'express'
 import auth from "./middlewares/auth.js";
@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json()); 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-app.use('/', publicRoutes);
+app.use('/', authRoutes);
 app.use('/',auth, privateRoutes)
 
 app.listen(PORT, () =>{ 
