@@ -30,10 +30,10 @@ pool.connect()
         const createProductsTableQuery = `
             CREATE TABLE IF NOT EXISTS products (
                 id SERIAL PRIMARY KEY,
-                name VARCHAR(100) NOT NULL,
+                name VARCHAR(100) NOT NULL UNIQUE,
                 category VARCHAR(100) NOT NULL,
                 price DECIMAL(10, 2) NOT NULL,
-                image_url VARCHAR(100) NOT NULL
+                image_url VARCHAR(1000) NOT NULL
             );
         `;
 
