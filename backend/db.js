@@ -10,7 +10,7 @@ const pool = new Pool({
 });
 
 pool.connect()
-    .then(() => {
+    .then(async () => {
         console.log('✅ Conectado ao PostgreSQL!');
 
         const createUsersTableQuery = `
@@ -26,6 +26,23 @@ pool.connect()
         pool.query(createUsersTableQuery)
             .then(() => console.log("✅ Tabela 'users' criada com sucesso!"))
             .catch(err => console.error("❌ Erro ao criar tabela 'users':", err));
+
+            const checkColumnQuery = `
+            SELECT column_name FROM information_schema.columns 
+            WHERE table_name='users' AND column_name='email_verified';
+        `;
+
+        
+        const result = await pool.query(checkColumnQuery);
+
+        if (result.rows.length === 0) {
+            console.log("⚠️ Coluna 'email_verified' não encontrada, adicionando...");
+            await pool.query("ALTER TABLE users ADD COLUMN email_verified BOOLEAN DEFAULT FALSE;");
+            console.log("✅ Coluna 'email_verified' adicionada com sucesso!");
+        } else {
+            console.log("✅ Coluna 'email_verified' já existe.");
+        }
+            
 
         const createProductsTableQuery = `
             CREATE TABLE IF NOT EXISTS products (
