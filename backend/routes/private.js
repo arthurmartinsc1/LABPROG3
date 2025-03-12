@@ -22,6 +22,6 @@ router.get("/cardapio", async (req,res) => {
         console.error("❌ Error retrieving products:", error);
         res.status(500).json({ error: "Internal server error" });
     }
-})
+});
 
 export default router;
