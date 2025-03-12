@@ -82,7 +82,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
  */
 
 const verificationCodes = new Map();
-router.post("/register", async (req, res) => {
+router.post("/register-app", async (req, res) => {
     try {
         const { cpf, name, email, password, birth_date } = req.body;
 
@@ -270,7 +270,7 @@ router.get("/", (req, res) => {
  */
 
 
-router.post("/login", async (req, res) => {
+router.post("/login-app", async (req, res) => {
     try {
         const { cpf, password } = req.body;
 
@@ -316,6 +316,33 @@ router.post("/login", async (req, res) => {
         console.error("❌ Login error:", error);
         res.status(500).json({ error: "Internal server error" });
     }
+});
+
+router.post("/login-token", async (req,res) => {
+    const { cpf } = req.body;
+    if (!cpf){
+        return res.status(400).json({ error: "cpf is required" });
+    }
+    try{
+        const userQuery = await pool.query("SELECT * FROM users WHERE cpf = $1", [cpf]);
+        if (userQuery.rows.length === 0){
+            // Usuário não entrando no banco
+            const newUser = await pool.query(
+                "INSERT INTO users (cpf, nome, email, password, birthday) VALUES ($1, NULL, NULL, NULL, NULL) RETURNING *",
+                [cpf]
+            );
+            return res.status(201).json(newUser.rows[0]);
+        }
+        else {
+            // Usuário encontrado no banco
+            return res.status(200).json(userQuery.rows[0]);
+        }
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+    
 });
 
 
