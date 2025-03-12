@@ -320,15 +320,19 @@ router.post("/login-app", async (req, res) => {
 
 router.post("/login-token", async (req,res) => {
     const { cpf } = req.body;
-    if (!cpf){
-        return res.status(400).json({ error: "cpf is required" });
+    if (!cpf) {
+        // CPF não fornecido, criar usuário com todos os atributos NULL (exceto id)
+        const newUser = await pool.query(
+            "INSERT INTO users (cpf, nome, email, password, birth_day) VALUES (NULL, NULL, NULL, NULL, NULL) RETURNING *"
+        );
+        return res.status(201).json(newUser.rows[0]);
     }
     try{
         const userQuery = await pool.query("SELECT * FROM users WHERE cpf = $1", [cpf]);
         if (userQuery.rows.length === 0){
             // Usuário não entrando no banco
             const newUser = await pool.query(
-                "INSERT INTO users (cpf, nome, email, password, birthday) VALUES ($1, NULL, NULL, NULL, NULL) RETURNING *",
+                "INSERT INTO users (cpf, nome, email, password, birth_day) VALUES ($1, NULL, NULL, NULL, NULL) RETURNING *",
                 [cpf]
             );
             return res.status(201).json(newUser.rows[0]);
