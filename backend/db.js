@@ -3,7 +3,7 @@ const { Pool } = pkg;
 
 const pool = new Pool({
     user: 'postgres',
-    host: 'localhost',
+    host: 'db',// nome do serviço no banco do docker-compose
     database: 'labprog3',
     password: 'amarelo100',
     port: 5432, // Porta padrão do PostgreSQL
