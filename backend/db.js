@@ -14,25 +14,27 @@ pool.connect()
         console.log('✅ Conectado ao PostgreSQL!');
 
         const createUsersTableQuery = `
-            CREATE TABLE IF NOT EXISTS users (
-                cpf VARCHAR(11) PRIMARY KEY,
-                name VARCHAR(100) NOT NULL,
-                email VARCHAR(100) NOT NULL UNIQUE,
-                password VARCHAR(100) NOT NULL,
-                birth_date DATE NOT NULL
-            );
-        `;
+        CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,  -- id autoincrementável como chave primária
+    cpf VARCHAR(11) UNIQUE, -- cpf agora pode ser NULL, mas ainda é único se preenchido
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(100),
+    birth_date DATE
+    );
+`;
+
 
         pool.query(createUsersTableQuery)
-            .then(() => console.log("✅ Tabela 'users' criada com sucesso!"))
+            .then(() => console.log("✅ Tabela 'users' criada com sucesso!", createUsersTableQuery))
             .catch(err => console.error("❌ Erro ao criar tabela 'users':", err));
 
-            const checkColumnQuery = `
+        const checkColumnQuery = `
             SELECT column_name FROM information_schema.columns 
             WHERE table_name='users' AND column_name='email_verified';
         `;
 
-        
+
         const result = await pool.query(checkColumnQuery);
 
         if (result.rows.length === 0) {
@@ -42,7 +44,7 @@ pool.connect()
         } else {
             console.log("✅ Coluna 'email_verified' já existe.");
         }
-            
+
 
         const createProductsTableQuery = `
             CREATE TABLE IF NOT EXISTS products (
@@ -61,7 +63,7 @@ pool.connect()
         const createOrdersTableQuery = `
             CREATE TABLE IF NOT EXISTS orders (
                 id SERIAL PRIMARY KEY,
-                user_id VARCHAR(11) REFERENCES users(cpf),
+                user_id integer REFERENCES users(id),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 total NUMERIC(10, 2) NOT NULL
             );
