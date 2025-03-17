@@ -1,13 +1,13 @@
 import React from 'react';
 import Header from './components/header';
-import Login from './pages/login';
+import Home from './pages/home';
 import './styles/App.css';
 
 function App() {
   return (
     <>
       <Header />
-      <Login />
+      <Home />
     </>
   );
 }

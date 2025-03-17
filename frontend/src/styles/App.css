@@ -3,15 +3,8 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
-  background-color: aquamarine;
-  color: yellow;
-}
-
-body {
-  background-color: purple;
 }
 
 #root {
   width: 100%;
-  background-color: brown;
 }
