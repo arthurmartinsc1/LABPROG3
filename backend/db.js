@@ -1,6 +1,6 @@
 import pkg from 'pg';
 const { Pool } = pkg;
-
+import { insertProducts } from "./productsDB.js";
 const pool = new Pool({
     user: 'postgres',
     host: 'db',// nome do serviço no banco do docker-compose
@@ -59,6 +59,9 @@ pool.connect()
         pool.query(createProductsTableQuery)
             .then(() => console.log("✅ Tabela 'products' criada com sucesso!"))
             .catch(err => console.error("❌ Erro ao criar tabela 'products':", err));
+
+
+        await insertProducts();
 
         const createOrdersTableQuery = `
             CREATE TABLE IF NOT EXISTS orders (

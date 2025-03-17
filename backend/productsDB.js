@@ -1,4 +1,4 @@
-import pool from "./db.js"
+import pool from "./db.js";
 
 const products = [
     // Sanduíches
@@ -36,20 +36,18 @@ const products = [
 ];
 
 
-const insertProducts = async () => {
+export const insertProducts = async () => {
     try {
         for (const product of products) {
-            await pool.query(
+            const res = await pool.query(
                 `INSERT INTO products (name, category, price, image_url) 
                 VALUES ($1, $2, $3, $4)
-                ON CONFLICT (name) DO NOTHING`,
+                ON CONFLICT (name) DO NOTHING RETURNING *;`, // Evita duplicatas
                 [product.name, product.category, product.price, product.image_url]
             );
+            console.log("✅ Produto inserido:", res.rows[0] || "Já existia");
         }
-        //console.log(`✅ Produtos inseridos com sucesso!`);
     } catch (err) {
         console.error("❌ Erro ao inserir produtos:", err);
     }
 };
-
-insertProducts();
