@@ -13,15 +13,6 @@ router.get("/users", async (req, res) => {
     }
 });
 
-router.get("/cardapio", async (req,res) => {
-    try{
-        const result = await pool.query("SELECT * FROM products");
-        res.json(result.rows);
-    }
-    catch(err){
-        console.error("❌ Error retrieving products:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-});
+
 
 export default router;

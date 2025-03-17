@@ -17,7 +17,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
  *   post:
  *     summary: Registra um novo usuário no sistema.
  *     tags:
- *       - Auth
+ *       - Auth(app)
  *     requestBody:
  *       required: true
  *       content:
@@ -135,7 +135,7 @@ router.post("/register-app", async (req, res) => {
  *     summary: Verifica o email do usuário
  *     description: Verifica o código de verificação enviado para o email do usuário e marca o email como verificado no banco de dados.
  *     tags:
- *       - Auth
+ *       - Auth(app)
  *     requestBody:
  *       required: true
  *       content:
@@ -235,7 +235,7 @@ router.get("/", (req, res) => {
  *   post:
  *     summary: Autentica um usuário e retorna um token JWT.
  *     tags:
- *       - Auth
+ *       - Auth(app)
  *     requestBody:
  *       required: true
  *       content:
@@ -268,8 +268,6 @@ router.get("/", (req, res) => {
  *       500:
  *         description: Erro interno do servidor.
  */
-
-
 router.post("/login-app", async (req, res) => {
     try {
         const { cpf, password } = req.body;
@@ -318,6 +316,74 @@ router.post("/login-app", async (req, res) => {
     }
 });
 
+
+/**
+ * @swagger
+ * /register-totem:
+ *   post:
+ *     summary: Registra um usuário via totem
+ *     tags:
+ *       - Auth (totem)
+ *     description: Permite que um usuário se registre no sistema via totem, podendo fornecer ou não um CPF no body.
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               cpf:
+ *                 type: string
+ *                 example: "12345678900"
+ *     responses:
+ *       201:
+ *         description: Usuário criado com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 cpf:
+ *                   type: string
+ *                   nullable: true
+ *                   example: "12345678900"
+ *                 name:
+ *                   type: string
+ *                   nullable: true
+ *                 email:
+ *                   type: string
+ *                   nullable: true
+ *                 password:
+ *                   type: string
+ *                   nullable: true
+ *                 birth_date:
+ *                   type: string
+ *                   format: date
+ *                   nullable: true
+ *       400:
+ *         description: Usuário já existe.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "User already exists"
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ */
 router.post("/register-totem", async (req,res) => {
     const { cpf } = req.body;
     if (!cpf) {
@@ -342,6 +408,7 @@ router.post("/register-totem", async (req,res) => {
                 "INSERT INTO users (cpf, name, email, password, birth_date) VALUES ($1, $2, $3, $4, $5) RETURNING *",
                 [cpf, null, null,null, null]
             );
+            console.log("User created:", newUser.rows[0]);
             return res.status(201).json(newUser.rows[0]);
         }
         else {
