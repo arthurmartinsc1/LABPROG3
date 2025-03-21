@@ -6,7 +6,7 @@ import Login from './pages/login';
 import MainPage from './pages/mainPage';
 import './styles/App.css';
 
-function App() {
+const App: React.FC = () => {
   return (
     <Router>
       <div className="App">
@@ -19,6 +19,6 @@ function App() {
       </div>
     </Router>
   );
-}
+};
 
 export default App;

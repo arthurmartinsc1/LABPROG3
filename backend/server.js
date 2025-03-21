@@ -4,9 +4,11 @@ import cardapio from "./routes/cardapio.js"
 import express from 'express'
 import auth from "./middlewares/auth.js"
 import { swaggerUi, swaggerDocs } from "./swaggerConfig.js";
+import cors from "cors";
 const PORT = 3000;
 
 const app = express();
+app.use(cors());
 app.use(express.json()); 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 

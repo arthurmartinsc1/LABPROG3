@@ -2,14 +2,14 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/home.css';
 
-function Home() {
+const Home: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleLoginClick = () => {
+  const handleLoginClick = (): void => {
     navigate('/login');
   };
 
-  const handleWithoutLoginClick = () => {
+  const handleWithoutLoginClick = (): void => {
     navigate('/mainPage');
   };
 
@@ -19,6 +19,6 @@ function Home() {
       <button className="home-button" onClick={handleWithoutLoginClick}>Entrar sem Cadastro</button>
     </div>
   );
-}
+};
 
 export default Home;

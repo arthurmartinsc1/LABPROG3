@@ -1,20 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/header';
 import '../styles/login.css';
 
-function Login() {
+const Login: React.FC = () => {
   const navigate = useNavigate();
+
   // Função de manipulação do clique para o botão "Voltar"
   const handleBackClick = () => {
     navigate('/');
-    // Adicione aqui a lógica para voltar à página anterior
   };
 
   // Função de manipulação do clique para o botão "Entrar"
   const handleLoginClick = () => {
     console.log('Entrar clicado');
-    // Adicione aqui a lógica para fazer login
   };
 
   return (
@@ -31,6 +29,6 @@ function Login() {
       </div>
     </div>
   );
-}
+};
 
 export default Login;

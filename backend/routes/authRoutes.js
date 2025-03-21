@@ -423,6 +423,19 @@ router.post("/register-totem", async (req,res) => {
     
 });
 
+router.get("/usuarios", async (req,res) => {
+    try{
+        const result = await pool.query("SELECT * FROM users");
+        console.log("usuários", result.rows)
+        res.json(result.rows);
+    }
+    catch(err){
+        console.error("❌ Error retrieving products:", err);
+        console.log("nao deu")
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 
 
 
