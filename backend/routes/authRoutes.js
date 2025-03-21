@@ -224,7 +224,7 @@ router.post("/verify-email" , async (req,res) => {
 
 
 router.get("/", (req, res) => {
-    res.send("🚀 API is running...");
+    res.send("🚀 API is running...NOVO");
 });
 
 //login route
