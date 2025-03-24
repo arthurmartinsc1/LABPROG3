@@ -436,6 +436,30 @@ router.get("/usuarios", async (req,res) => {
     }
 });
 
+router.get("/usuarios/cpf", async (req, res) => {
+    try {
+        const { cpf } = req.query; // Captura o CPF da query string
+
+        if (!cpf) {
+            return res.json([]); // Retorna uma lista vazia se nenhum CPF for informado
+        }
+
+        // Busca o usuário pelo CPF
+        const result = await pool.query("SELECT * FROM users WHERE cpf = $1", [cpf]);
+
+        if (result.rows.length === 0) {
+            return res.json([]); // Retorna lista vazia se o CPF não for encontrado
+        }
+
+        return res.json(result.rows[0]); // Retorna o usuário encontrado
+    } catch (err) {
+        console.error("❌ Error retrieving user:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+
+
 
 
 
