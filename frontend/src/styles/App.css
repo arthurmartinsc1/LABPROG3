@@ -1,8 +1,13 @@
+body {
+  overflow: hidden; /* Desativa a rolagem no corpo da página */
+}
+
 .App {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
+  padding-top: 9rem;
 }
 
 #root {

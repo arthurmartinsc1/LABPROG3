@@ -12,7 +12,7 @@ const products = [
     { name: "Big Tasty", category: "Sanduíches", price: 34.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kfXJJjT7/200/200/original?country=br" },
 
     // Bebidas
-    { name: "Coca-Cola", category: "Bebidas", price: 8.00, image_url: "	https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kNXBvqQj/200/200/original?country=br" },
+    { name: "Coca-Cola", category: "Bebidas", price: 8.00, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kNXBvqQj/200/200/original?country=br" },
     { name: "Fanta Laranja", category: "Bebidas", price: 8.00, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kNXCmy2C/200/200/original?country=br" },
     { name: "Fanta Guaraná", category: "Bebidas", price: 8.00, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kNXqRBxK/200/200/original?country=br" },
     { name: "Suco de Uva Del Valle", category: "Bebidas", price: 10.00, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kNXlm7Gu/200/200/original?country=br" },
@@ -26,7 +26,7 @@ const products = [
     { name: "Chicken McNuggets", category: "Acompanhamentos", price: 24.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kMXFAQwe/200/200/original?country=br" },
 
     // Sobremesas
-    { name: "McFlurry", category: "Sobremesas", price: 16.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kAX3cmD2/200/200/original?country=br" },
+    { name: "McFlurry", category: "Sobremesas", price: 16.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/…mage/product$kRX3z5qu/200/200/original?country=br" },
     { name: "Sundae", category: "Sobremesas", price: 12.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kpXuLeTy/200/200/original?country=br" },
     { name: "Top Sundae", category: "Sobremesas", price: 13.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kpXGFtJB/200/200/original?country=br" },
     { name: "Casquinha", category: "Sobremesas", price: 5.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kpX0NLJ6/200/200/original?country=br" },
