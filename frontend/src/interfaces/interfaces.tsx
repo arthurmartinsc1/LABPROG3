@@ -15,3 +15,8 @@ export interface User {
     name: string;
     birth_date: Date;
 }
+export enum HttpStatus {
+    OK = 200,
+    BAD_REQUEST = 400,
+    INTERNAL_SERVER_ERROR = 500,
+}

@@ -1,14 +1,31 @@
 import React, { useState, useEffect } from "react";
 import '../styles/mainPage.css';
 import { MenuItem, Product } from "../interfaces/interfaces";
-import { List, InputNumber, Button } from "antd";
+import { List, InputNumber, Button, ConfigProvider } from "antd";
+import { DeleteOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { useNavigate } from 'react-router-dom';
+
+
 
 const API_URL = "http://localhost:3000/"
+
 
 const MainPage: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('Sanduíches');
     const [products, setProducts] = useState<Product[]>([]);
     const [cart, setCart] = useState<{ [key: number]: number }>({});
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const navigate = useNavigate();
+
+    <ConfigProvider
+    theme={{
+        components:{
+            InputNumber:{
+                handleBorderColor: '#FFBD14'
+            }
+        }
+    }}
+  ></ConfigProvider>
 
     useEffect(() => {
         fetch(`${API_URL}produtos`)
@@ -29,13 +46,40 @@ const MainPage: React.FC = () => {
         : [];
 
     const updateQuantity = (productId: number, value: number) => {
-        setCart((prev) => ({
-            ...prev,
-            [productId]: Math.max(0, value),
-        }));
+        setCart((prev) => {
+            const newCart = { ...prev, [productId]: Math.max(0, value) };
+            
+            if (value > 0) {
+                setIsCartOpen(true);
+            }
+    
+            return newCart;
+        });
+    };
+
+    const handleRemoveFromCart = (productId: number) => {
+        setCart((prev) => {
+            const newCart = { ...prev };
+            delete newCart[productId];
+            return newCart;
+        });
+    };
+
+    const finalizePurchase = () => {
+        navigate("/payment")
     };
 
     return (
+        <ConfigProvider
+            theme={{
+                components: {
+                    InputNumber: {
+                        hoverBorderColor: '#FFBD14',
+                        activeBorderColor: '#FFBD14'
+                    },
+                },
+            }}
+        >
         <div className="container">
             <aside className="sidebar">
                 <nav>
@@ -66,24 +110,65 @@ const MainPage: React.FC = () => {
                             <div className="product-controls">
                                 <Button
                                     onClick={() => updateQuantity(product.id, (cart[product.id] || 0) - 1)}
+                                    variant="outlined"
                                     disabled={(cart[product.id] || 0) <= 0}
-                                >
+                                    color="gold">
                                     -
                                 </Button>
                                 <InputNumber
                                     min={0}
                                     value={cart[product.id] || 0}
                                     onChange={(value: number | null) => updateQuantity(product.id, value ?? 0)}
+                                    controls={false}
                                 />
-                                <Button onClick={() => updateQuantity(product.id, (cart[product.id] || 0) + 1)}>
+                                <Button 
+                                    onClick={() => updateQuantity(product.id, (cart[product.id] || 0) + 1)}
+                                    variant="outlined"
+                                    color="gold">
                                     +
                                 </Button>
                             </div>
                         </List.Item>
+                        
                     )}
                 />
             </div>
+            {isCartOpen && (
+                <div className="cart-sidebar">
+                    <h3 style={{ display: 'flex', alignItems: 'center' }}>
+                        Carrinho
+                        <ShoppingCartOutlined style={{ fontSize: '24px', marginLeft: '5px' }} />
+                    </h3>
+                    <List
+                        dataSource={Object.keys(cart)}  
+                        renderItem={(productId) => {
+                            const product = products.find(p => p.id === parseInt(productId));
+                            const quantity = cart[parseInt(productId)];
+
+                            return (
+                                product && (
+                                    <List.Item key={product.id} className="cart-item">
+                                        <span>{product.name} - R$ {product.price} x {quantity}</span>
+                                        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
+                                            <Button 
+                                                color="danger" 
+                                                variant="outlined"
+                                                icon={<DeleteOutlined twoToneColor="#ff4d4f" />} 
+                                                size="small" 
+                                                onClick={() => handleRemoveFromCart(product.id)} 
+                                                style={{ marginLeft: 10 }}
+                                            />
+                                        </div>
+                                    </List.Item>
+                                )
+                            );
+                        }}
+                    />
+                    <Button onClick={finalizePurchase}>Finalizar Compra</Button>
+                </div>
+            )}
         </div>
+    </ConfigProvider>
     );
 };
 
