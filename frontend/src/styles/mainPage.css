@@ -1,6 +1,7 @@
 .container {
     display: flex;
     height: 100vh;
+    height: calc(100vh - 9rem); 
   }
   
 .sidebar {
@@ -42,11 +43,17 @@
   justify-content: flex-start;
   overflow: hidden;
   overflow-y: auto;
+  max-height: calc(100vh - 9rem);
 }
 
 .ant-list .ant-list-item{
-  justify-content: flex-start;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px;
   gap: 16px;
+  border-bottom: 1px solid #ddd;
 }
 
 .product-img {
@@ -54,4 +61,19 @@
     height: 80px;
     object-fit: cover;
     border-radius: 8px;
+}
+
+.product-details {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  padding-left: 16px;
+}
+
+.product-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
