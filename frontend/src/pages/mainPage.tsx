@@ -3,7 +3,9 @@ import '../styles/mainPage.css';
 import { MenuItem, Product } from "../interfaces/interfaces";
 import { List, InputNumber, Button, ConfigProvider } from "antd";
 import { DeleteOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+
 import { useNavigate } from 'react-router-dom';
+
 
 
 
@@ -16,6 +18,7 @@ const MainPage: React.FC = () => {
     const [cart, setCart] = useState<{ [key: number]: number }>({});
     const [isCartOpen, setIsCartOpen] = useState(false);
     const navigate = useNavigate();
+
 
     <ConfigProvider
     theme={{
@@ -63,6 +66,7 @@ const MainPage: React.FC = () => {
             delete newCart[productId];
             return newCart;
         });
+
     };
 
     const finalizePurchase = () => {
@@ -164,7 +168,9 @@ const MainPage: React.FC = () => {
                             );
                         }}
                     />
+
                     <Button onClick={finalizePurchase}>Finalizar Compra</Button>
+
                 </div>
             )}
         </div>
