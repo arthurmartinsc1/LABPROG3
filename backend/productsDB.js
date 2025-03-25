@@ -26,7 +26,7 @@ const products = [
     { name: "Chicken McNuggets", category: "Acompanhamentos", price: 24.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kMXFAQwe/200/200/original?country=br" },
 
     // Sobremesas
-    { name: "McFlurry", category: "Sobremesas", price: 16.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/…mage/product$kRX3z5qu/200/200/original?country=br" },
+    { name: "McFlurry", category: "Sobremesas", price: 16.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kRX3z5qu/200/200/original?country=br" },
     { name: "Sundae", category: "Sobremesas", price: 12.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kpXuLeTy/200/200/original?country=br" },
     { name: "Top Sundae", category: "Sobremesas", price: 13.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kpXGFtJB/200/200/original?country=br" },
     { name: "Casquinha", category: "Sobremesas", price: 5.90, image_url: "https://cache-mcd-middleware.mcdonaldscupones.com/media/image/product$kpX0NLJ6/200/200/original?country=br" },
