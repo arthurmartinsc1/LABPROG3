@@ -35,6 +35,7 @@ pool.connect()
         `;
 
 
+
         const result = await pool.query(checkColumnQuery);
 
         if (result.rows.length === 0) {
@@ -44,6 +45,15 @@ pool.connect()
         } else {
             console.log("✅ Coluna 'email_verified' já existe.");
         }
+
+
+        const checkProductsTableExistsQuery = `
+    SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'products'
+    );
+`;
 
 
         const createProductsTableQuery = `
@@ -56,12 +66,25 @@ pool.connect()
             );
         `;
 
-        pool.query(createProductsTableQuery)
-            .then(() => console.log("✅ Tabela 'products' criada com sucesso!"))
-            .catch(err => console.error("❌ Erro ao criar tabela 'products':", err));
-
-
-        await insertProducts();
+        try {
+            
+            await pool.query(createProductsTableQuery);
+            console.log("✅ Tabela 'products' criada com sucesso!");
+        
+           
+            const result = await pool.query(checkProductsTableExistsQuery);
+            const tableExists = result.rows[0].exists;
+        
+            if (tableExists) {
+                await insertProducts();
+                console.log("📦 Produtos inseridos com sucesso!");
+            } else {
+                console.log("⚠️ Tabela 'products' não existe. Inserção ignorada.");
+            }
+        
+        } catch (err) {
+            console.error("❌ Erro ao lidar com a tabela 'products':", err);
+        }
 
         const createOrdersTableQuery = `
             CREATE TABLE IF NOT EXISTS orders (

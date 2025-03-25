@@ -436,28 +436,83 @@ router.get("/usuarios", async (req,res) => {
     }
 });
 
-router.get("/usuarios/cpf", async (req, res) => {
-    try {
-        const { cpf } = req.query; // Captura o CPF da query string
 
-        if (!cpf) {
-            return res.json([]); // Retorna uma lista vazia se nenhum CPF for informado
+
+//login 
+
+/**
+ * @swagger
+ * /login-totem:
+ *   post:
+ *     summary: Login de totem via CPF
+ *     tags:
+ *       - Auth (totem)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - cpf
+ *             properties:
+ *               cpf:
+ *                 type: string
+ *                 example: "12345678900"
+ *     responses:
+ *       200:
+ *         description: Usuário encontrado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 cpf:
+ *                   type: string
+ *                   example: "12345678900"
+ *       400:
+ *         description: CPF ausente ou usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: Erro interno do servidor
+ */
+
+router.post("/login-totem",async(req,res) =>{
+    try{
+        const {cpf} = req.body;
+
+        if(!cpf){
+            return res.status(400).json({error: "CPF is required"});
         }
 
-        // Busca o usuário pelo CPF
-        const result = await pool.query("SELECT * FROM users WHERE cpf = $1", [cpf]);
+        const userQuery = await pool.query("SELECT * FROM users WHERE cpf = $1", [cpf]);
 
-        if (result.rows.length === 0) {
-            return res.json([]); // Retorna lista vazia se o CPF não for encontrado
+        if(userQuery.rows.length === 0){
+            return res.status(400).json({error: "User not found"});
         }
 
-        return res.json(result.rows[0]); // Retorna o usuário encontrado
-    } catch (err) {
-        console.error("❌ Error retrieving user:", err);
+        const user = userQuery.rows[0];
+
+        res.status(200).json({
+            id: user.id,
+            cpf: user.cpf,
+        });
+    }
+    catch(err){
+        console.error("❌ Login error:", err);
         res.status(500).json({ error: "Internal server error" });
     }
-});
-
+})
 
 
 
