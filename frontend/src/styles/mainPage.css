@@ -1,16 +1,21 @@
 .container {
-    display: flex;
-    height: 100vh;
-    height: calc(100vh - 9rem); 
-  }
-  
+  display: flex;
+  height: calc(100vh - 9rem); /* Ajusta para ocupar a altura correta */
+}
+
+/* Sidebar fixa à esquerda */
 .sidebar {
   width: 20%;
   background-color: white;
   border-right: 2px solid #ddd;
   padding: 20px;
+  height: 100%;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
 }
 
+/* Menu de categorias */
 .menu-item {
   display: flex;
   flex-direction: column;
@@ -18,35 +23,47 @@
   margin-bottom: 20px;
   text-align: center;
   font-size: 14px;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 .menu-img {
   width: 90px;
   height: 90px;
+  object-fit: cover;
 }
 
-.menu-item:hover {
-  background: #ffcc00;
-}
-
+.menu-item:hover,
 .menu-item.active {
   background: #ffcc00;
   font-weight: bold;
 }
 
+/* Área principal */
 .content {
   flex-grow: 1;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  overflow: hidden;
+  align-items: center;
   overflow-y: auto;
   max-height: calc(100vh - 9rem);
 }
 
-.ant-list .ant-list-item{
+/* Grid de produtos */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1000px;
+  padding-bottom: 50px; /* Evita que os produtos fiquem colados no final */
+}
+
+/* Cartão dos produtos */
+.product-list-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,15 +71,26 @@
   padding: 16px;
   gap: 16px;
   border-bottom: 1px solid #ddd;
+  background: white;
+  border-radius: 10px;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
 }
 
+.product-list-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+  border-color: #ffcc00;
+}
+
+/* Imagem do produto */
 .product-img {
-    width: 90px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 8px;
+  width: 90px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
+/* Detalhes do produto */
 .product-details {
   flex-grow: 1;
   display: flex;
@@ -72,33 +100,47 @@
   padding-left: 16px;
 }
 
+/* Controles do produto */
 .product-controls {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+/* Carrinho fixo à direita */
 .cart-sidebar {
-  right: 0;
   width: 20%;
   background-color: white;
   border-left: 2px solid #ddd;
   padding: 20px;
+  height: 100%;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
 }
 
-.cart-sidebar ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.cart-sidebar li {
+/* Itens do carrinho */
+.cart-item {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
 }
 
+/* Botão de finalizar compra */
 .cart-sidebar button {
-  margin-left: 10px;
+  width: 100%;
+  margin-top: 10px;
+  background: #ffcc00;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
 }
 
-
+.cart-sidebar button:hover {
+  background: #e6b800;
+}

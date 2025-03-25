@@ -4,14 +4,22 @@ import { MenuItem, Product } from "../interfaces/interfaces";
 import { List, InputNumber, Button, ConfigProvider } from "antd";
 import { DeleteOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 
+import { useNavigate } from 'react-router-dom';
+
+
+
 
 const API_URL = "http://localhost:3000/"
+
 
 const MainPage: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('Sanduíches');
     const [products, setProducts] = useState<Product[]>([]);
     const [cart, setCart] = useState<{ [key: number]: number }>({});
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const navigate = useNavigate();
+
+
     <ConfigProvider
     theme={{
         components:{
@@ -58,6 +66,11 @@ const MainPage: React.FC = () => {
             delete newCart[productId];
             return newCart;
         });
+
+    };
+
+    const finalizePurchase = () => {
+        navigate("/payment")
     };
 
     return (
@@ -155,7 +168,9 @@ const MainPage: React.FC = () => {
                             );
                         }}
                     />
-                    <Button onClick={() => alert("Finalizar compra")}>Finalizar Compra</Button>
+
+                    <Button onClick={finalizePurchase}>Finalizar Compra</Button>
+
                 </div>
             )}
         </div>
