@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/login.css';
 import { notification } from "antd";
 import type { NotificationArgsProps } from "antd";
+import { HttpStatus } from '../interfaces/interfaces';
 
 
 
@@ -39,22 +40,32 @@ const Login: React.FC = () => {
       openNotification("error", "Erro no Login", "Por favor, insira um CPF.");
       return;
     }
-
+  
     try {
-      const response = await fetch(`${API_URL}usuarios/cpf?cpf=${cpf}`);
+      const response = await fetch(`${API_URL}login-totem`, {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cpf }),
+      });
+  
       const data = await response.json();
-
-      if (data.length === 0) {
-        openNotification("error", "Erro no Login", "CPF não cadastrado");
-      } else {
+  
+      if (response.status === HttpStatus.OK) {
         openNotification("success", "Login Bem Sucedido!", "Você será redirecionado...");
-        setTimeout(() => navigate("/mainPage"), 1500); 
+        setTimeout(() => navigate("/mainPage"), 1500);
+      } else if (response.status === HttpStatus.BAD_REQUEST) {
+        openNotification("error", "Erro no Login", "CPF não cadastrado.");
+      } else {
+        throw new Error(data.error || "Erro desconhecido.");
       }
     } catch (error) {
       console.error("Erro ao buscar usuário:", error);
-      openNotification("error", "Erro no Servidor", "Tente novamente mais tarde");
+      openNotification("error", "Erro no Servidor", "Tente novamente mais tarde.");
     }
   };
+  
 
   return (
     <div className="login-page">

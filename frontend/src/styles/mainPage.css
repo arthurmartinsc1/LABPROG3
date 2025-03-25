@@ -77,3 +77,28 @@
   align-items: center;
   gap: 8px;
 }
+
+.cart-sidebar {
+  right: 0;
+  width: 20%;
+  background-color: white;
+  border-left: 2px solid #ddd;
+  padding: 20px;
+}
+
+.cart-sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.cart-sidebar li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.cart-sidebar button {
+  margin-left: 10px;
+}
+
+
