@@ -81,6 +81,9 @@ const MainPage: React.FC = () => {
                         hoverBorderColor: '#FFBD14',
                         activeBorderColor: '#FFBD14'
                     },
+                    List:{
+                        itemPadding: '12px 12px',
+                    }
                 },
             }}
         >
@@ -160,7 +163,6 @@ const MainPage: React.FC = () => {
                                                 icon={<DeleteOutlined twoToneColor="#ff4d4f" />} 
                                                 size="small" 
                                                 onClick={() => handleRemoveFromCart(product.id)} 
-                                                style={{ marginLeft: 10 }}
                                             />
                                         </div>
                                     </List.Item>
@@ -168,6 +170,16 @@ const MainPage: React.FC = () => {
                             );
                         }}
                     />
+
+                    <h3 style={{ marginTop: "10px", textAlign: "center" }}>
+                        Total: R$ {Object.keys(cart).reduce((total, productId) => {
+                            const product = products.find(p => p.id === parseInt(productId));
+                            const price = parseFloat(product?.price ?? "0"); // Converte price para número
+                            const quantity = cart[parseInt(productId)] ?? 0; // Garante que quantity seja um número
+                            return total + price * quantity;
+                        }, 0).toFixed(2)}
+                    </h3>
+
 
                     <Button onClick={finalizePurchase}>Finalizar Compra</Button>
 
