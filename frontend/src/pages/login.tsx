@@ -49,6 +49,7 @@ const Login: React.FC = () => {
         },
         body: JSON.stringify({ cpf }),
       });
+      
   
       const data = await response.json();
   
