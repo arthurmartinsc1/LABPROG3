@@ -66,6 +66,7 @@ pool.connect()
             );
         `;
 
+
         try {
             
             await pool.query(createProductsTableQuery);
