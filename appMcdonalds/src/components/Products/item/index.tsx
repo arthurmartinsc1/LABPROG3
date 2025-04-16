@@ -7,9 +7,9 @@ export function ProductItem({item}: {item:ProdutoProps}) {
           <Image
             source={{ uri: item.image_url }}
             className="rounded-md"
-            style={{ width: 90, height: 90 }}
+            style={{ width: 110, height: 90 }}
           />
-          <View className="w-full mt-1">
+          <View className="w-full mt-1 flex items-center">
             <Text className="text-xs text-gray-500" numberOfLines={1} ellipsizeMode="tail">
               {item.name}
             </Text>
