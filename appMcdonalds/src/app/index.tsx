@@ -1,13 +1,13 @@
 import { Text, View } from "react-native";
-import ProdutosScreen from "./screens/Products";
 import { Header } from "../components/header";
+import { Products } from "../components/Products";
 
 export default function Index() {
 
   return (
     <View>
       <Header/>
-      <ProdutosScreen/>
+      <Products/>
     </View>
   );
 }
