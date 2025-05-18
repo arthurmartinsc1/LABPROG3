@@ -3,7 +3,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
     background-color: #f8f8f8;
     text-align: center;
   }
@@ -50,14 +49,13 @@
   }
   
   .back-button {
-    margin-top: 20px;
     background: #333;
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 5px;
     cursor: pointer;
     transition: 0.3s;
+    margin: 10px;
   }
   
   .back-button:hover {

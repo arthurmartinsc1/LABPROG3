@@ -5,6 +5,7 @@ import Home from './pages/home';
 import Login from './pages/login';
 import MainPage from './pages/mainPage';
 import PaymentPage from './pages/paymentPage';
+import PaymentConfirmationPage from './pages/paymentConfirmationPage';
 
 import './styles/App.css';
 
@@ -18,6 +19,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/mainPage" element={<MainPage />} />
           <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/paymentConfirmation" element={<PaymentConfirmationPage />} />
         </Routes>
       </div>
     </Router>

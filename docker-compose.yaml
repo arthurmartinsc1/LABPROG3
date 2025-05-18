@@ -35,12 +35,16 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # evita conflito com node_modules local
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
     depends_on:
       - backend
-    ports:
-      - "5173:80"
+      
 volumes:
   postgres_data:
 
