@@ -2,6 +2,7 @@ import authRoutes from "./routes/authRoutes.js"
 import privateRoutes from "./routes/private.js"
 import cardapio from "./routes/cardapio.js"
 import express from 'express'
+import orderRoutes from "./routes/orderRoutes.js"
 import auth from "./middlewares/auth.js"
 import { swaggerUi, swaggerDocs } from "./swaggerConfig.js";
 import cors from "cors";
@@ -12,9 +13,11 @@ app.use(cors());
 app.use(express.json()); 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+app.use('/', orderRoutes)
 app.use('/', authRoutes);
 app.use('/', cardapio)
 app.use('/',auth, privateRoutes)
+
 
 
 app.listen(PORT, () =>{ 
