@@ -308,7 +308,11 @@ router.post("/login-app", async (req, res) => {
         const accessToken = jwt.sign({cpf: user.cpf}, JWT_SECRET, { expiresIn: "1d" });
 
         
-        res.status(200).json({accessToken});
+        res.status(200).json({
+            message : "login bem sucedido",
+            accessToken: accessToken,
+            
+        });
 
     } catch (error) {
         console.error("❌ Login error:", error);
