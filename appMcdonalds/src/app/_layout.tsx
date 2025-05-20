@@ -6,11 +6,7 @@ export default function RootLayout() {
   return (
     <>
       <Header />
-      <Stack 
-        screenOptions={{
-          headerShown: false, 
-        }}
-      />;
+      <Stack screenOptions={{ headerShown: false, }}/>;
     </>
   );
 }
