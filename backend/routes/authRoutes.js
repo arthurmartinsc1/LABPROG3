@@ -518,7 +518,19 @@ router.post("/login-totem",async(req,res) =>{
     }
 })
 
-
+router.post("/anonymous-users", async (req, res) => {
+  try {
+    const newUser = await pool.query(
+      "INSERT INTO users (cpf, name, email, password, birth_date) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [null, null, null, null, null]
+    );
+    console.log("Anonymous user created:", newUser.rows[0]);
+    return res.status(201).json(newUser.rows[0]);
+  } catch (error) {
+    console.error("Error creating anonymous user:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 router.get("/usuarios/:id",async(req,res) => {
     try{

@@ -4,7 +4,7 @@ import { MenuItem, Product } from "../interfaces/interfaces";
 import { List, InputNumber, Button, ConfigProvider } from "antd";
 import { DeleteOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 
 
@@ -18,6 +18,9 @@ const MainPage: React.FC = () => {
     const [cart, setCart] = useState<{ [key: number]: number }>({});
     const [isCartOpen, setIsCartOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location.state as { userId?: number } | null;
+    const userId = state?.userId;
 
 
     <ConfigProvider
@@ -70,8 +73,9 @@ const MainPage: React.FC = () => {
     };
 
     const finalizePurchase = () => {
-        navigate("/payment")
+        navigate("/payment", { state: { cart, userId } });
     };
+
 
     return (
         <ConfigProvider
