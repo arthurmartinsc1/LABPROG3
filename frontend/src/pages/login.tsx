@@ -55,7 +55,7 @@ const Login: React.FC = () => {
   
       if (response.status === HttpStatus.OK) {
         openNotification("success", "Login Bem Sucedido!", "Você será redirecionado...");
-        setTimeout(() => navigate("/mainPage"), 1500);
+        setTimeout(() => navigate("/mainPage", { state: { userId: data.id } }), 1500);
       } else if (response.status === HttpStatus.BAD_REQUEST) {
         openNotification("error", "Erro no Login", "CPF não cadastrado.");
       } else {

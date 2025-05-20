@@ -2,11 +2,6 @@ import express from 'express'
 import pool from "../db.js"
 
 const router = express.Router();
-
-
-
-
-
 router.post("/order", async (req, res) => {
     const { user_id, items } = req.body;
   
@@ -73,9 +68,6 @@ router.post("/order", async (req, res) => {
       client.release();
     }
   });
-  
-
-
 
 router.get("/todos", async(req,res) => {
     try {

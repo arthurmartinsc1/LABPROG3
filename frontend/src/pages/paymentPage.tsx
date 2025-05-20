@@ -1,13 +1,16 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/paymentPage.css";
 
 const PaymentPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const cart = location.state?.cart;
+  const userId = location.state?.userId;
 
   const handlePaymentChoice = (method: string) => {
-    navigate("/paymentConfirmation", { state: { method } });
-  };
+  navigate("/paymentConfirmation", { state: { method, cart, userId } });
+};
 
   return (
     <div className="payment-container">
@@ -32,7 +35,7 @@ const PaymentPage: React.FC = () => {
           Dinheiro
         </button>
       </div>
-      <button className="back-button" onClick={() => navigate("/mainPage")}>
+      <button className="back-button" onClick={() => navigate('/mainPage', { state: { userId: userId } })}>
         Voltar
       </button>
     </div>
