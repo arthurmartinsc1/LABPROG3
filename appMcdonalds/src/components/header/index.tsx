@@ -1,9 +1,11 @@
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet, StatusBar } from 'react-native';
+import styles from "../../styles/components/header.styles";
 
 export function Header() {
- return (
-  <View className='bg-red-600 items-center justify-center'>
-    <Text className='text-yellow-400 font-bold'>Mc'donalds</Text>
-  </View>
+  return (
+    <View style={styles.container}>
+      <StatusBar backgroundColor="#DB0106" barStyle="light-content" />
+      <Text style={styles.title}>Mc Donald's</Text>
+    </View>
   );
 }
