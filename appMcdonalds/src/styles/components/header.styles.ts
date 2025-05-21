@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
       paddingHorizontal: 16, 
       alignItems: 'flex-start', 
       justifyContent: 'center',
+      height: 120
     },
     title: {
       color: '#FFBD14', 
