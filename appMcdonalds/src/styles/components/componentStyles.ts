@@ -36,6 +36,11 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 18,
     },
+    image: {
+        width: 200,
+        height: 200,
+        marginBottom: 40,
+    },
 });
 
 export default styles;
