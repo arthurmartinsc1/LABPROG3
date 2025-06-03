@@ -7,7 +7,6 @@ import styles from "../../styles/components/products.styles";
 export function Products() {
   const produtos = useProdutos();
 
-  // Agrupar produtos por categoria
   const groupedProducts = produtos.reduce((acc: Record<string, typeof produtos>, product) => {
     if (!acc[product.category]) {
       acc[product.category] = [];

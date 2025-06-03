@@ -9,15 +9,15 @@ export default function Navbar() {
 
   return (
     <View style={styles.navbar}>
-      <TouchableOpacity style={{alignItems:'center'}} onPress={() => router.replace("/produtos")}>
+      <TouchableOpacity style={{alignItems:'center'}} onPress={() => router.replace("/app/produtos")}>
         <MaterialCommunityIcons name="food" size={24} color="#DB0106" />
         <Text style={styles.navItem}>Produtos</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={{alignItems:'center'}} onPress={() => router.replace("/carrinho")}>
+      <TouchableOpacity style={{alignItems:'center'}} onPress={() => router.replace("/app/carrinho")}>
         <Ionicons name="cart" size={24} color="#DB0106" />
         <Text style={styles.navItem}>Carrinho</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={{alignItems:'center'}} onPress={() => router.replace("/perfil")}>
+      <TouchableOpacity style={{alignItems:'center'}} onPress={() => router.replace("/app/perfil")}>
         <FontAwesome name="user" size={24} color="#DB0106" />
         <Text style={styles.navItem}>Perfil</Text>
       </TouchableOpacity>

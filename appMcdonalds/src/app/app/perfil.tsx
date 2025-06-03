@@ -1,7 +1,7 @@
 // app/perfil.tsx
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import stylesPerfil from "../styles/perfil";
-import styles from "../styles/components/componentStyles";
+import stylesPerfil from "../../styles/perfil"
+import styles from "../../styles/components/componentStyles";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 

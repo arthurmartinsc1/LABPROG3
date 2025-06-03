@@ -270,15 +270,15 @@ router.get("/", (req, res) => {
  */
 router.post("/login-app", async (req, res) => {
     try {
-        const { cpf, password } = req.body;
+        const { email, password } = req.body;
 
         
-        if (!cpf || !password) {
-            return res.status(400).json({ error: "cpf  and password are required" });
+        if (!email || !password) {
+            return res.status(400).json({ error: "email  and password are required" });
         }
 
         
-        const userQuery = await pool.query("SELECT * FROM users WHERE cpf = $1", [cpf]);
+        const userQuery = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
 
         
         if (userQuery.rows.length === 0) {

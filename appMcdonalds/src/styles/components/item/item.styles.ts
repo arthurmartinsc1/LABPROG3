@@ -12,8 +12,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   image: {
-    width: 80,
-    height: 80,
+    width: 110,
+    height: 110,
     borderRadius: 8,
   },
   infoContainer: {

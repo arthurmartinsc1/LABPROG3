@@ -1,12 +1,14 @@
 import "react-native-reanimated";
 import { Stack } from "expo-router";
-import '../styles/global.css';
-import { Header } from "../components/header";
+import Navbar  from "../../components/Navbar"
+import { CartProvider } from "../../app/context/cartContext";
 export default function RootLayout() {
   return (
+    <CartProvider>
     <>
-      <Header />
       <Stack screenOptions={{ headerShown: false, }}/>
+      <Navbar/>
     </>
+    </CartProvider>
   );
 }
