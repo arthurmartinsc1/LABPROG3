@@ -4,6 +4,7 @@ import stylesLogin from "../styles/login";
 import styles from "../styles/components/componentStyles";
 import { router } from 'expo-router';
 import { API_URL } from '../config/config';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
@@ -21,6 +22,11 @@ export default function LoginScreen() {
 
             if (response.ok) {
                 const data = await response.json();
+                if (!data.accessToken) {
+                    Alert.alert("Erro", "Token não recebido do servidor.");
+                    return;
+                }
+                await AsyncStorage.setItem("token", data.accessToken);
                 router.push("/app/produtos");
             } else {
                 Alert.alert('Erro', 'Email ou senha inválidos');

@@ -549,7 +549,35 @@ router.get("/usuarios/:id",async(req,res) => {
     }
 })
 
+// Middleware para autenticação JWT
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.status(401).json({ error: "No token provided" });
 
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) return res.status(403).json({ error: "Invalid token" });
+    req.user = decoded; 
+    next();
+  });
+}
+
+// ROTA /me
+router.get("/me", authenticateToken, async (req, res) => {
+  try {
+    const { cpf } = req.user;
+    const userQuery = await pool.query("SELECT * FROM users WHERE cpf = $1", [cpf]);
+    if (userQuery.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const user = userQuery.rows[0];
+    delete user.password;
+    res.json(user);
+  } catch (err) {
+    console.error("❌ Error in /me:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
 
