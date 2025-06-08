@@ -1,24 +1,39 @@
-import swaggerJsDoc from "swagger-jsdoc";
+import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 
-const swaggerOptions = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-            title: "API do Sistema de Self-Order",
-            version: "1.0.0",
-            description: "Documentação da API usando Swagger",
-        },
-        servers: [
-            {
-                url: "http://localhost:3000",
-                description: "Servidor Local",
-            },
-        ],
+const swaggerDefinition = {
+  openapi: "3.0.0",
+  info: {
+    title: "API Principal",
+    version: "1.0.0",
+    description: "Documentação da API com autenticação JWT Bearer",
+  },
+  servers: [
+    {
+      url: "http://localhost:3000",
     },
-    apis: ["./routes/*.js"], 
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
+  },
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
 };
 
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
+const options = {
+  definition: swaggerDefinition, 
+  apis: ["./routes/*.js"], 
+};
+
+const swaggerDocs = swaggerJSDoc(options);
 
 export { swaggerUi, swaggerDocs };
