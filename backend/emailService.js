@@ -15,14 +15,14 @@ const transporter = nodemailer.createTransport({
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
 console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "*****" : "NÃO DEFINIDO");
 
-export const sendVerificationEmail = async (email, verificationCode) => {
+export const sendVerificationEmail = async (email, verificationCode, tipo) => {
     try {
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: email,
-            subject: "Seu Código de Verificação - SelfOrder",
+            to: email,            
+            subject: `Código de Verificação - ${ tipo}`,
             text: `Seu código de verificação é: ${verificationCode}.\n\nEle expira em 10 minutos.`
-        };
+        }; 
 
         await transporter.sendMail(mailOptions);
         console.log(`📩 Código enviado para ${email}`);

@@ -13,7 +13,7 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 /**
  * @swagger
- * /register:
+ * /register-app:
  *   post:
  *     summary: Registra um novo usuário no sistema.
  *     tags:
@@ -95,6 +95,8 @@ router.post("/register-app", async (req, res) => {
             return res.status(400).json({ error: "CPF, full name, email, password, and birth date are required" });
         }
 
+        console.log("Received registration request:", { cpf, name, email, birth_date });
+
        
         const query = `
             INSERT INTO users (cpf, name, email, password, birth_date)
@@ -114,7 +116,7 @@ router.post("/register-app", async (req, res) => {
 
         console.log("salvo no map " , verificationCodes.get(email, verificationCode));
 
-        await sendVerificationEmail(email, verificationCode);
+        await sendVerificationEmail(email, verificationCode,"Verificação de email para login");
 
         res.status(201).json({
              message: "Usuário registrado com sucesso! Verifique seu email para ativar sua conta.",
@@ -128,6 +130,311 @@ router.post("/register-app", async (req, res) => {
     }
 });
 
+
+
+/**
+ * @swagger
+ * /reset-password-pin:
+ *   post:
+ *     summary: Envia um código de verificação por email para redefinição de senha.
+ *     description: Verifica se o email informado está cadastrado e envia um código PIN para redefinir a senha.
+ *     tags:
+ *       - Auth(app)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "usuario@email.com"
+ *     responses:
+ *       200:
+ *         description: Código enviado com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Password reset email sent successfully"
+ *                 redirect:
+ *                   type: string
+ *                   example: "/verify-reset"
+ *       400:
+ *         description: Campo de email ausente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Email is required"
+ *       404:
+ *         description: Usuário não encontrado com o email informado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: Erro interno do servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+router.post("/reset-password-pin", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    const userQuery = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    if (userQuery.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    console.log("User found:", userQuery.rows[0]);
+
+    const verificationCode = crypto.randomInt(100000, 999999).toString();
+    console.log("Verification code:", verificationCode);
+
+    const cleanedEmail = email.trim().toLowerCase();
+    verificationCodes.set(cleanedEmail, {
+      code: verificationCode,
+      expires: Date.now() + 10 * 60 * 1000
+    });
+
+    console.log("Stored verification code:", verificationCodes.get(cleanedEmail));
+    console.log("Map completo:", [...verificationCodes.entries()]);
+
+    await sendVerificationEmail(email, verificationCode, "Resetar senha");
+
+    res.status(200).json({
+      message: "Password reset email sent successfully",
+      redirect: "/verify-reset"
+    });
+
+  } catch (error) {
+    console.error("❌ Reset password error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+/**
+ * @swagger
+ * /verify-reset:
+ *   post:
+ *     summary: Verifica o código de redefinição de senha enviado por email.
+ *     description: Confirma se o código de verificação enviado ao email do usuário é válido antes de permitir a atualização da senha.
+ *     tags:
+ *       - Auth(app)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - code
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "usuario@email.com"
+ *               code:
+ *                 type: string
+ *                 example: "123456"
+ *     responses:
+ *       200:
+ *         description: Código verificado com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Verification code is valid"
+ *                 redirect:
+ *                   type: string
+ *                   example: "/update-password"
+ *       400:
+ *         description: Código inválido ou expirado, ou campos ausentes.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Invalid or expired verification code"
+ *       500:
+ *         description: Erro interno do servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+
+
+router.post("/verify-reset", async (req, res) => {
+    console.log("Todos os códigos salvos:", [...verificationCodes.entries()]);
+
+    console.log("este eh o req ", req.body);
+    try {
+        const {email, code} = req.body;
+        console.log("Received email and code:", {email, code});
+
+        if(!email || !code){
+            return res.status(400).json({error: "Email and code are required"});
+        }
+
+        const storedCode = verificationCodes.get(email);
+        console.log("Stored code:", storedCode);
+        if (!storedCode || storedCode.code !== code) {
+            return res.status(400).json({ error: "Invalid or expired verification code" });
+        }
+
+        return res.status(200).json({
+            message: "Verification code is valid",
+            redirect: "/update-password"
+        })
+    } catch (error) {
+        console.error("❌ Error resending verification email:", error);
+        res.status(500).json({ error: "Internal server error" });
+        
+    }
+
+
+})
+
+/**
+ * @swagger
+ * /update-password:
+ *   post:
+ *     summary: Atualiza a senha do usuário após validação do código de verificação.
+ *     description: Atualiza a senha do usuário no banco de dados utilizando o email e a nova senha fornecida.
+ *     tags:
+ *       - Auth(app)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - newPassword
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "andradeeeegorilaaaaasso@email.com"
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *                 example: "barrabarrabarrabarra!"
+ *     responses:
+ *       200:
+ *         description: Senha atualizada com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Password updated successfully"
+ *                 redirect:
+ *                   type: string
+ *                   example: "/login"
+ *       400:
+ *         description: Campos obrigatórios ausentes.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Email and new password are required"
+ *       404:
+ *         description: Usuário não encontrado com o email informado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: Erro interno do servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+
+
+router.post("/update-password", async (req, res) => {
+    try {
+        const {email, newPassword} = req.body;
+
+        if(!email || !newPassword){
+            return res.status(400).json({error: "Email and new password are required"});
+        }
+
+        const userQuery = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+        if (userQuery.rows.length === 0) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const user = userQuery.rows[0];
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(newPassword, salt);
+        await pool.query("UPDATE users SET password = $1 WHERE email = $2", [hashPassword, email]);
+
+        verificationCodes.delete(email);
+        res.status(200).json({
+            message: "Password updated successfully",
+            redirect: "/login"
+        });
+
+
+        
+    } catch (error) {
+        console.error("❌ Error updating password:", error);
+        res.status(500).json({ error: "Internal server error" });
+        
+    }
+})
 /**
  * @swagger
  * /verify-email:
@@ -166,7 +473,7 @@ router.post("/register-app", async (req, res) => {
  *                   example: "Email verified successfully"
  *                 redirect:
  *                   type: string
- *                   example: "/login"
+ *                   example: "/login-app"
  *       400:
  *         description: Código inválido ou expirado, ou campos ausentes
  *         content:
@@ -188,7 +495,6 @@ router.post("/register-app", async (req, res) => {
  *                   type: string
  *                   example: "Internal server error"
  */
-
 
 router.post("/verify-email" , async (req,res) => {
     try {
@@ -231,7 +537,7 @@ router.get("/", (req, res) => {
 
 /**
  * @swagger
- * /login:
+ * /login-app:
  *   post:
  *     summary: Autentica um usuário e retorna um token JWT.
  *     tags:
@@ -548,36 +854,6 @@ router.get("/usuarios/:id",async(req,res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 })
-
-// Middleware para autenticação JWT
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  if (!token) return res.status(401).json({ error: "No token provided" });
-
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) return res.status(403).json({ error: "Invalid token" });
-    req.user = decoded; 
-    next();
-  });
-}
-
-// ROTA /me
-router.get("/me", authenticateToken, async (req, res) => {
-  try {
-    const { cpf } = req.user;
-    const userQuery = await pool.query("SELECT * FROM users WHERE cpf = $1", [cpf]);
-    if (userQuery.rows.length === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    const user = userQuery.rows[0];
-    delete user.password;
-    res.json(user);
-  } catch (err) {
-    console.error("❌ Error in /me:", err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
 
 
 
