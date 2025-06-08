@@ -13,10 +13,10 @@ const auth = async (req, res, next) => {
     const decode = jwt.verify(token.replace('Bearer ', ''), JWT_SECRET);
     console.log("this is decode", decode);
 
-    // ✅ Corrigir: passar o payload para o request
+    
     req.user = decode;
 
-    next(); // segue para a rota protegida
+    next(); 
   } catch (error) {
     console.error("❌ Error verifying token:", error);
     return res.status(403).json({ error: "Token inválido!" });
