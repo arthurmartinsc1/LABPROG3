@@ -41,6 +41,20 @@ const styles = StyleSheet.create({
         height: 200,
         marginBottom: 40,
     },
+
+    buttonDisabled: {
+    opacity: 0.6,
+  },
+  linkButton: {
+    marginTop: 15,
+    padding: 10,
+  },
+  linkText: {
+    color: '#007AFF',
+    fontSize: 16,
+    textAlign: 'center',
+  }
 });
+
 
 export default styles;
