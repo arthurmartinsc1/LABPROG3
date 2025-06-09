@@ -21,15 +21,37 @@ export const getProducts = async () => {
 
 export const getUserProfile = async () => {
   try {
-    const token = await AsyncStorage.getItem("token");
-    const response = await api.get("/me", {
+    // Buscar o token armazenado
+    const token = await AsyncStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('Token não encontrado. Faça login novamente.');
+    }
+
+    const response = await fetch(`${API_URL}/me`, {
+      method: 'GET',
       headers: {
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
     });
-    return response.data;
+
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        // Token inválido ou expirado
+        await AsyncStorage.removeItem('token');
+        throw new Error('Sessão expirada. Faça login novamente.');
+      }
+      
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Erro ao buscar dados do usuário');
+    }
+
+    const userData = await response.json();
+    return userData;
+    
   } catch (error) {
-    console.error("Erro ao buscar perfil:", error);
+    console.error('Erro ao buscar perfil:', error);
     throw error;
   }
 };
