@@ -47,12 +47,12 @@ const styles = StyleSheet.create({
   },
   linkButton: {
     marginTop: 15,
-    padding: 10,
+    width: '80%'
   },
   linkText: {
-    color: '#007AFF',
-    fontSize: 16,
-    textAlign: 'center',
+    color: '#FFC300',
+    fontSize: 13,
+    textAlign: 'right',
   }
 });
 

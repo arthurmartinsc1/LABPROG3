@@ -7,7 +7,7 @@ const stylesLogin = StyleSheet.create({
   },
   forgotPasswordText: {
       color: '#FFC300',
-      fontSize: 12,
+      fontSize: 13,
       alignSelf: 'flex-end',
       marginRight: '10%',
       marginBottom: 10,
