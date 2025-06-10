@@ -94,10 +94,9 @@ export default function Perfil() {
   }
 
   const formatCPF = (cpf: string) => {
-  if (!cpf) return "";
-  return cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
+    if (!cpf) return "";
+    return cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
   };
-
 
   return (
     <View style={styles.container}>
