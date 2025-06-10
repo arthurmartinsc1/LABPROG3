@@ -73,6 +73,12 @@ export default function Perfil() {
     );
   }
 
+  const formatCPF = (cpf: string) => {
+  if (!cpf) return "";
+  return cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
+  };
+
+
   return (
     <View style={styles.container}>
       <View style={stylesPerfil.header}>
@@ -82,7 +88,7 @@ export default function Perfil() {
           <Text style={stylesPerfil.logout}>Sair</Text>
         </TouchableOpacity>
       </View>
-      <TextInput style={styles.input} value={user?.cpf || ""} editable={false} />
+      <TextInput style={styles.input} value={formatCPF(user?.cpf) || ""} editable={false} />
       <TextInput style={styles.input} value={user?.name || ""} editable={false} />
       <TextInput style={styles.input} value={user?.email || ""} editable={false} />
       <TextInput style={styles.input} value={formatDate(user?.birth_date) || ""} editable={false} />
