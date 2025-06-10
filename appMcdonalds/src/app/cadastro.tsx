@@ -125,9 +125,11 @@ const handleRegister = async () => {
         }
       }}
     />
-      <TextInput style={styles.input} placeholder="Nome" value={name} onChangeText={setName} />
-      <TextInput style={styles.input} placeholder="E-mail" value={email} onChangeText={setEmail} />
-      <TextInput style={styles.input} placeholder="Data de nascimento" value={birthDate} keyboardType="numeric"
+      <TextInput style={styles.input} placeholder="Nome" value={name} onChangeText={setName} placeholderTextColor={'#999'} />
+      <TextInput style={styles.input} placeholder="E-mail" value={email} onChangeText={setEmail}
+        placeholderTextColor={'#999'} autoCapitalize="none" autoComplete="email" keyboardType="email-address"
+       />
+      <TextInput style={styles.input} placeholder="Data de nascimento" placeholderTextColor={'#999'} value={birthDate} keyboardType="numeric"
         onChangeText={(text) => {
           const formatted = formatDate(text);
           setBirthDate(formatted);
@@ -136,8 +138,8 @@ const handleRegister = async () => {
           }
         }}
       />
-      <TextInput style={styles.input} placeholder="Senha" secureTextEntry value={password} onChangeText={setPassword} />
-      <TextInput style={styles.input} placeholder="Confirmar senha" secureTextEntry value={confirmPassword} onChangeText={setConfirmPassword} />
+      <TextInput style={styles.input} placeholder="Senha" placeholderTextColor={'#999'} secureTextEntry value={password} onChangeText={setPassword} />
+      <TextInput style={styles.input} placeholder="Confirmar senha" placeholderTextColor={'#999'} secureTextEntry value={confirmPassword} onChangeText={setConfirmPassword} />
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Registrar</Text>
       </TouchableOpacity>

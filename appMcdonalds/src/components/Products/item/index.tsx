@@ -7,8 +7,9 @@ export function ProductItem({ item }: { item: ProdutoProps }) {
   const screenWidth = Dimensions.get("window").width;
   const itemWidth = screenWidth / 2.3;
 
-  const { addToCart, removeFromCart, getProductQuantity } = useCart(); // ✅ incluir getProductQuantity
-  const quantidade = getProductQuantity(item.id); // ✅ usar quantidade do contexto
+  const { addToCart, removeFromCart, getProductQuantity } = useCart();
+
+  const quantidade = getProductQuantity(item.id);
 
   const handleIncrement = () => {
     addToCart(item);
@@ -18,9 +19,44 @@ export function ProductItem({ item }: { item: ProdutoProps }) {
     removeFromCart(item.id);
   };
 
+  // Função para validar e limpar a URI
+  const getValidImageUri = (uri: string | undefined | null): string | null => {
+    if (!uri || typeof uri !== 'string') {
+      return null;
+    }
+
+    // Remove espaços em branco no início e fim
+    const cleanUri = uri.trim();
+
+    // Verifica se é uma URL válida
+    try {
+      new URL(cleanUri);
+      return cleanUri;
+    } catch (error) {
+      console.warn('URI inválida:', cleanUri);
+      return null;
+    }
+  };
+
+  const validImageUri = getValidImageUri(item?.image_url);
+
   return (
     <View style={[styles.container, { width: itemWidth }]}>
-      <Image source={{ uri: item.image_url }} style={styles.image} resizeMode="contain" />
+      {validImageUri ? (
+        <Image 
+          source={{ uri: validImageUri }} 
+          style={styles.image} 
+          resizeMode="contain"
+          onError={(error) => {
+            console.warn('Erro ao carregar imagem:', error.nativeEvent.error);
+          }}
+        />
+      ) : (
+        <View style={[styles.image, styles.placeholderImage]}>
+          <Text style={styles.placeholderText}>Sem imagem</Text>
+        </View>
+      )}
+      
       <View style={styles.infoContainer}>
         <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
         <Text style={styles.price}>

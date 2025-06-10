@@ -61,6 +61,20 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     textAlign: "center",
   },
+  
+
+placeholderImage: {
+  backgroundColor: '#f0f0f0',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: 8,
+},
+
+placeholderText: {
+  color: '#666',
+  fontSize: 12,
+  textAlign: 'center',
+},
 });
 
 export default styles;
