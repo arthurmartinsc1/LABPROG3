@@ -33,6 +33,8 @@ export const getUserProfile = async () => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
       },
     });
 

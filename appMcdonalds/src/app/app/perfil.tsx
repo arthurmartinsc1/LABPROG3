@@ -1,10 +1,10 @@
 // app/perfil.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import stylesPerfil from "../../styles/perfil"
 import styles from "../../styles/components/componentStyles";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { getUserProfile } from "../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -12,39 +12,59 @@ export default function Perfil() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        const data = await getUserProfile();
-        setUser(data);
-      } catch (err: any) {
-        console.error('Erro ao carregar perfil:', err);
-        
-        // Se o erro for relacionado à autenticação, redirecionar para login
-        if (err.message.includes('Sessão expirada') || err.message.includes('Token não encontrado')) {
-          Alert.alert(
-            "Sessão Expirada", 
-            "Sua sessão expirou. Você será redirecionado para o login.",
-            [
-              {
-                text: "OK",
-                onPress: () => router.push("/")
-              }
-            ]
-          );
-        } else {
-          Alert.alert("Erro", "Não foi possível carregar seus dados.");
-        }
-      } finally {
-        setLoading(false);
+  // Função para buscar perfil
+  const fetchProfile = useCallback(async () => {
+    try {
+      setLoading(true);
+      // Limpa o estado anterior antes de buscar novos dados
+      setUser(null);
+      
+      const data = await getUserProfile();
+      console.log('Dados do perfil carregados:', data); // Para debug
+      setUser(data);
+    } catch (err: any) {
+      console.error('Erro ao carregar perfil:', err);
+      
+      // Se o erro for relacionado à autenticação, redirecionar para login
+      if (err.message.includes('Sessão expirada') || err.message.includes('Token não encontrado')) {
+        Alert.alert(
+          "Sessão Expirada", 
+          "Sua sessão expirou. Você será redirecionado para o login.",
+          [
+            {
+              text: "OK",
+              onPress: () => router.push("/")
+            }
+          ]
+        );
+      } else {
+        Alert.alert("Erro", "Não foi possível carregar seus dados.");
       }
+    } finally {
+      setLoading(false);
     }
-    fetchProfile();
   }, []);
+
+  // useEffect inicial
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  // Recarrega sempre que a tela for focada
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile();
+    }, [fetchProfile])
+  );
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem('token');
+      // Limpa todos os dados relacionados à sessão
+      await AsyncStorage.multiRemove(['token', 'user', 'userProfile']);
+      
+      // Limpa o estado local
+      setUser(null);
+      
       router.push("/");
     } catch (error) {
       console.error('Erro ao fazer logout:', error);

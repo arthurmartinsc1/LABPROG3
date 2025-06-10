@@ -62,7 +62,7 @@ export default function VerificationScreen() {
 
       if (res.ok) {
         alert("✅ Verificação concluída!");
-        router.push("/app/produtos"); 
+        router.push("/"); 
       } else {
         alert("❌ Erro: " + data.error);
       }
