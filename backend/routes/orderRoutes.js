@@ -125,7 +125,7 @@ router.post("/order", async (req, res) => {
 
 /**
  * @swagger
- * /todos:
+ * /allOrders:
  *   get:
  *     summary: Lista todos os pedidos
  *     description: Retorna todos os pedidos registrados no banco de dados.
@@ -166,7 +166,7 @@ router.post("/order", async (req, res) => {
  *                   type: string
  *                   example: Internal server error
  */
-router.get("/todos", async(req,res) => {
+router.get("/allOrders", async(req,res) => {
     try {
         const result = await pool.query("SELECT * FROM orders");
         console.log("pedidos", result.rows)
