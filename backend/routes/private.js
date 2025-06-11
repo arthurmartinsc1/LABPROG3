@@ -90,7 +90,8 @@ router.get("/me", async (req, res) => {
     const { cpf } = req.user;
 
     const userQuery = await pool.query("SELECT * FROM users WHERE cpf = $1", [cpf]);
-
+    console.log("User query result:", userQuery.rows);
+    
     if (userQuery.rows.length === 0) {
       return res.status(404).json({ error: "User not found" });
     }
