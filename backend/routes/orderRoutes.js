@@ -125,7 +125,7 @@ router.post("/order", async (req, res) => {
 
 /**
  * @swagger
- * /todos:
+ * /allOrders:
  *   get:
  *     summary: Lista todos os pedidos
  *     description: Retorna todos os pedidos registrados no banco de dados.
@@ -166,7 +166,7 @@ router.post("/order", async (req, res) => {
  *                   type: string
  *                   example: Internal server error
  */
-router.get("/todos", async(req,res) => {
+router.get("/allOrders", async(req,res) => {
     try {
         const result = await pool.query("SELECT * FROM orders");
         console.log("pedidos", result.rows)
@@ -183,14 +183,15 @@ router.get("/todos", async(req,res) => {
 
 /**
  * @swagger
- * /todos:
+ * /orderItems:
  *   get:
- *     summary: Lista todos os pedidos
+ *     summary: Lista todos os itens de pedidos
+ *     description: Retorna todos os registros da tabela `order_items`, contendo os produtos relacionados a cada pedido.
  *     tags:
  *       - Pedidos
  *     responses:
  *       200:
- *         description: Lista de pedidos retornada com sucesso
+ *         description: Lista de itens de pedidos retornada com sucesso
  *         content:
  *           application/json:
  *             schema:
@@ -201,17 +202,29 @@ router.get("/todos", async(req,res) => {
  *                   id:
  *                     type: integer
  *                     example: 1
- *                   user_id:
+ *                   order_id:
  *                     type: integer
- *                     example: 1
- *                   total:
+ *                     example: 10
+ *                   product_id:
+ *                     type: integer
+ *                     example: 101
+ *                   quantity:
+ *                     type: integer
+ *                     example: 2
+ *                   price:
  *                     type: number
- *                     example: 199.99
- *                   created_at:
- *                     type: string
- *                     format: date-time
+ *                     format: float
+ *                     example: 49.95
  *       500:
- *         description: Erro interno no servidor
+ *         description: Erro interno ao buscar os itens de pedidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error
  */
 router.get('/orderItems', async (req,res)=> {
     try {
