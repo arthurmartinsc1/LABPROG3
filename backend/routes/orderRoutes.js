@@ -166,7 +166,7 @@ router.post("/order", async (req, res) => {
  *                   type: string
  *                   example: Internal server error
  */
-router.get("/todos", async(req,res) => {
+router.get("/pedidos", async(req,res) => {
     try {
         const result = await pool.query("SELECT * FROM orders");
         console.log("pedidos", result.rows)
