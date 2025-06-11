@@ -125,7 +125,7 @@ router.post("/order", async (req, res) => {
 
 /**
  * @swagger
- * /todos:
+ * /pedidos:
  *   get:
  *     summary: Lista todos os pedidos
  *     description: Retorna todos os pedidos registrados no banco de dados.
