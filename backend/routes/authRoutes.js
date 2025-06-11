@@ -627,73 +627,7 @@ router.post("/login-app", async (req, res) => {
 });
 
 
-/**
- * @swagger
- * /register-totem:
- *   post:
- *     summary: Registra um usuário via totem
- *     tags:
- *       - Auth (totem)
- *     description: Permite que um usuário se registre no sistema via totem, podendo fornecer ou não um CPF no body.
- *     requestBody:
- *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               cpf:
- *                 type: string
- *                 example: "12345678900"
- *     responses:
- *       201:
- *         description: Usuário criado com sucesso.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   example: 1
- *                 cpf:
- *                   type: string
- *                   nullable: true
- *                   example: "12345678900"
- *                 name:
- *                   type: string
- *                   nullable: true
- *                 email:
- *                   type: string
- *                   nullable: true
- *                 password:
- *                   type: string
- *                   nullable: true
- *                 birth_date:
- *                   type: string
- *                   format: date
- *                   nullable: true
- *       400:
- *         description: Usuário já existe.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "User already exists"
- *       500:
- *         description: Erro interno no servidor.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Internal Server Error"
- */
+
 router.post("/register-totem", async (req,res) => {
     const { cpf } = req.body;
     if (!cpf) {
@@ -733,6 +667,50 @@ router.post("/register-totem", async (req,res) => {
     
 });
 
+
+
+/**
+ * @swagger
+ * /usuarios:
+ *   get:
+ *     summary: Lista todos os usuários
+ *     description: Retorna todos os usuários cadastrados no banco de dados.
+ *     tags:
+ *       - Usuários
+ *     responses:
+ *       200:
+ *         description: Lista de usuários retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: João da Silva
+ *                   email:
+ *                     type: string
+ *                     example: joao@email.com
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-06-10T15:00:00.000Z"
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error
+ */
 router.get("/usuarios", async (req,res) => {
     try{
         const result = await pool.query("SELECT * FROM users");
@@ -824,6 +802,57 @@ router.post("/login-totem",async(req,res) =>{
     }
 })
 
+/**
+ * @swagger
+ * /anonymous-users:
+ *   post:
+ *     summary: Cria um usuário anônimo
+ *     description: Cria um novo usuário com todos os campos nulos (anônimo). Retorna o usuário criado.
+ *     tags:
+ *       - Usuários
+ *     responses:
+ *       201:
+ *         description: Usuário anônimo criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 123
+ *                 cpf:
+ *                   type: string
+ *                   nullable: true
+ *                   example: null
+ *                 name:
+ *                   type: string
+ *                   nullable: true
+ *                   example: null
+ *                 email:
+ *                   type: string
+ *                   nullable: true
+ *                   example: null
+ *                 password:
+ *                   type: string
+ *                   nullable: true
+ *                   example: null
+ *                 birth_date:
+ *                   type: string
+ *                   format: date
+ *                   nullable: true
+ *                   example: null
+ *       500:
+ *         description: Erro interno ao criar usuário anônimo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
 router.post("/anonymous-users", async (req, res) => {
   try {
     const newUser = await pool.query(
@@ -838,22 +867,7 @@ router.post("/anonymous-users", async (req, res) => {
   }
 });
 
-router.get("/usuarios/:id",async(req,res) => {
-    try{
-        const {id} = req.params;
-        const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
 
-        if(result.rows.length === 0){
-            return res.status(404).json({error: "User not found"});
-        }
-
-        res.json(result.rows[0]);
-    }
-    catch(err){
-        console.error("❌ Error retrieving user:", err);
-        res.status(500).json({ error: "Internal server error" });
-    }
-})
 
 
 
