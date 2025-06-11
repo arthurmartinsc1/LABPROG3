@@ -2,6 +2,60 @@ import express from 'express'
 import pool from "../db.js"
 
 const router = express.Router();
+
+/**
+ * @swagger
+ * /order:
+ *   post:
+ *     summary: Cria um novo pedido
+ *     tags:
+ *       - Pedidos
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_id
+ *               - items
+ *             properties:
+ *               user_id:
+ *                 type: integer
+ *                 example: 1
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - product_id
+ *                     - quantity
+ *                   properties:
+ *                     product_id:
+ *                       type: integer
+ *                       example: 101
+ *                     quantity:
+ *                       type: integer
+ *                       example: 2
+ *     responses:
+ *       201:
+ *         description: Pedido criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Pedido criado com sucesso!
+ *                 order:
+ *                   type: object
+ *       400:
+ *         description: Dados inválidos ou produto não encontrado
+ *       500:
+ *         description: Erro interno no servidor
+ */
+
 router.post("/order", async (req, res) => {
     const { user_id, items } = req.body;
   
@@ -69,6 +123,49 @@ router.post("/order", async (req, res) => {
     }
   });
 
+/**
+ * @swagger
+ * /todos:
+ *   get:
+ *     summary: Lista todos os pedidos
+ *     description: Retorna todos os pedidos registrados no banco de dados.
+ *     tags:
+ *       - Pedidos
+ *     responses:
+ *       200:
+ *         description: Lista de pedidos retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   user_id:
+ *                     type: integer
+ *                     example: 1
+ *                   total:
+ *                     type: number
+ *                     format: float
+ *                     example: 149.90
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-06-10T14:30:00.000Z"
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error
+ */
 router.get("/todos", async(req,res) => {
     try {
         const result = await pool.query("SELECT * FROM orders");
@@ -84,7 +181,38 @@ router.get("/todos", async(req,res) => {
     }
 })
 
-
+/**
+ * @swagger
+ * /todos:
+ *   get:
+ *     summary: Lista todos os pedidos
+ *     tags:
+ *       - Pedidos
+ *     responses:
+ *       200:
+ *         description: Lista de pedidos retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   user_id:
+ *                     type: integer
+ *                     example: 1
+ *                   total:
+ *                     type: number
+ *                     example: 199.99
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *       500:
+ *         description: Erro interno no servidor
+ */
 router.get('/orderItems', async (req,res)=> {
     try {
         const result = await pool.query("SELECT * FROM order_items");
