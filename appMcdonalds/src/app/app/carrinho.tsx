@@ -1,60 +1,88 @@
+import { useState } from "react";
 import { useCart } from "../context/cartContext";
-import { View, Text, FlatList, StyleSheet, Image, Alert, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, StyleSheet, Image, Alert, TouchableOpacity, ListRenderItem } from "react-native";
+import TelaPagamento from "./telaPagamento"; // Importe o componente
 
-export default function Carrinho() {
+// Assumindo que você tem um tipo para o item do carrinho
+interface CartItem {
+  id: number;
+  name: string;
+  price: string | number;
+  quantity: number;
+  image_url: string;
+}
+
+export default function Carrinho(): JSX.Element {
   const { cartItems, clearCart } = useCart();
+  const [showPayment, setShowPayment] = useState<boolean>(false);
 
-  const total = cartItems.reduce(
-    (sum, item) => sum + Number(item.price) * (item.quantity || 1),
+  const total: number = cartItems.reduce(
+    (sum: number, item: CartItem) => sum + Number(item.price) * (item.quantity || 1),
     0
   );
 
-  const handlePagamento = () => {
-    Alert.alert("Pagamento", "Siga as instruções do pinpad para concluir o pagamento.");
+  const handlePagamento = (): void => {
+    if (cartItems.length === 0) {
+      Alert.alert("Erro", "Seu carrinho está vazio!");
+      return;
+    }
+    setShowPayment(true);
   };
 
-  const handleCancelar = () => {
+  const handleCancelar = (): void => {
     clearCart();
     Alert.alert("Cancelar Pedido", "Pedido cancelado!");
   };
+
+  const closePayment = (): void => {
+    setShowPayment(false);
+  };
+
+  const renderItem: ListRenderItem<CartItem> = ({ item }) => (
+    <View style={styles.card}>
+      <Image source={{ uri: item.image_url }} style={styles.image} />
+      <View style={styles.info}>
+        <Text style={styles.name}>{item.name}</Text>
+        <Text style={styles.details}>Quantidade: {item.quantity}</Text>
+        <Text style={styles.details}>Preço: R$ {Number(item.price).toFixed(2)}</Text>
+      </View>
+    </View>
+  );
+
+  const ListFooter = (): JSX.Element => (
+    <View style={styles.footer}>
+      <Text style={styles.totalText}>Total: R$ {total.toFixed(2)}</Text>
+
+      <TouchableOpacity style={styles.button} onPress={handlePagamento}>
+        <Text style={styles.buttonText}>Pagar</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={handleCancelar} style={styles.cancelContainer}>
+        <Text style={styles.cancelText}>Cancelar pedido</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
       {cartItems.length === 0 ? (
         <Text style={styles.emptyText}>Seu carrinho está vazio 😢</Text>
       ) : (
-
-        <FlatList
+        <FlatList<CartItem>
           data={cartItems}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Image source={{ uri: item.image_url }} style={styles.image} />
-              <View style={styles.info}>
-                <Text style={styles.name}>{item.name}</Text>
-                <Text style={styles.details}>Quantidade: {item.quantity}</Text>
-                <Text style={styles.details}>Preço: R$ {Number(item.price).toFixed(2)}</Text>
-              </View>
-            </View>
-          )}
-          ListFooterComponent={
-            <View style={styles.footer}>
-              <Text style={styles.totalText}>Total: R$ {total.toFixed(2)}</Text>
-
-              <TouchableOpacity style={styles.button} onPress={handlePagamento}>
-                <Text style={styles.buttonText}>Pagar</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={handleCancelar} style={styles.cancelContainer}>
-                <Text style={styles.cancelText}>Cancelar pedido</Text>
-              </TouchableOpacity>
-            </View>
-          }
+          keyExtractor={(item: CartItem) => item.id.toString()}
+          renderItem={renderItem}
+          ListFooterComponent={ListFooter}
           contentContainerStyle={{ paddingBottom: 72 }}
         />
-
-
       )}
+
+      {/* Tela de Pagamento Modal */}
+      <TelaPagamento
+        visible={showPayment}
+        onClose={closePayment}
+        total={total}
+      />
     </View>
   );
 }
@@ -111,7 +139,6 @@ const styles = StyleSheet.create({
     elevation: 4,
     marginTop: 12,
   },
-
   totalText: {
     fontSize: 18,
     fontWeight: "bold",
@@ -119,7 +146,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textAlign: "left",
   },
-
   button: {
     backgroundColor: "#FDBA1C",
     paddingVertical: 14,
@@ -133,17 +159,14 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-
   buttonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
-
   cancelContainer: {
     alignItems: "flex-end",
   },
-
   cancelText: {
     color: "#FF0000",
     fontSize: 14,
