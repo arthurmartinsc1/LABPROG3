@@ -82,6 +82,7 @@ export default function Carrinho(): JSX.Element {
         visible={showPayment}
         onClose={closePayment}
         total={total}
+        cartItems={cartItems}
       />
     </View>
   );

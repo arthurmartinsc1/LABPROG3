@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { API_URL } from '../../config/config'
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Modal,
-  Alert
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import { useCart } from '../context/cartContext';
 
@@ -13,27 +15,103 @@ interface TelaPagamentoProps {
   visible: boolean;
   onClose: () => void;
   total: number;
+  cartItems: CartItem[];
+}
+
+interface CartItem {
+  id: number;
+  name: string;
+  price: string | number;
+  quantity: number;
+  image_url: string;
+}
+
+interface OrderItem {
+  product_id: number;
+  quantity: number;
+}
+
+interface ApiResponse {
+  message: string;
+  order: {
+    id: number;
+    user_id: number;
+    total: number;
+    created_at: string;
+  };
 }
 
 type PaymentMethod = 'PIX' | 'Cartão de Débito' | 'Cartão de Crédito';
 
-export default function TelaPagamento({ visible, onClose, total }: TelaPagamentoProps) {
+export default function TelaPagamento({ visible, onClose, total, cartItems }: TelaPagamentoProps) {
   const { clearCart } = useCart();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handlePayment = (method: PaymentMethod): void => {
-    Alert.alert(
-      "Pagamento",
-      `Pagamento de R$ ${total.toFixed(2)} via ${method} realizado com sucesso!`,
-      [
-        {
-          text: "OK",
-          onPress: () => {
-            clearCart();
-            onClose();
+  const createOrder = async (items: OrderItem[], userId: number): Promise<ApiResponse> => {
+    const response = await fetch(`${API_URL}/order`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        items: items
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Erro ao criar pedido');
+    }
+
+    return response.json();
+  };
+
+  const handlePayment = async (method: PaymentMethod): Promise<void> => {
+    try {
+      setLoading(true);
+
+      // Converte os itens do carrinho para o formato esperado pela API
+      const orderItems: OrderItem[] = cartItems.map(item => ({
+        product_id: item.id,
+        quantity: item.quantity
+      }));
+
+      // IMPORTANTE: Substitua por um user_id real do usuário logado
+      const userId = 1; // Você deve pegar isso do contexto de autenticação
+
+      // Faz a requisição para criar o pedido
+      const response = await createOrder(orderItems, userId);
+
+      Alert.alert(
+        "Sucesso!",
+        `Pedido criado com sucesso!\nPagamento via ${method}\nTotal: R$ ${total.toFixed(2)}\nPedido #${response.order.id}`,
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              clearCart();
+              onClose();
+            }
           }
-        }
-      ]
-    );
+        ]
+      );
+
+    } catch (error) {
+      console.error('Erro ao processar pagamento:', error);
+      
+      Alert.alert(
+        "Erro",
+        error instanceof Error ? error.message : "Erro ao processar pagamento. Tente novamente.",
+        [
+          {
+            text: "OK"
+          }
+        ]
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,37 +130,47 @@ export default function TelaPagamento({ visible, onClose, total }: TelaPagamento
             <Text style={styles.totalValue}>R$ {total.toFixed(2)}</Text>
           </View>
 
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity
-              style={[styles.paymentButton, styles.pixButton]}
-              onPress={() => handlePayment('PIX')}
-            >
-              <Text style={styles.buttonIcon}>📱</Text>
-              <Text style={styles.buttonText}>PIX</Text>
-            </TouchableOpacity>
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#FDBA1C" />
+              <Text style={styles.loadingText}>Processando pedido...</Text>
+            </View>
+          ) : (
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity
+                style={[styles.paymentButton, styles.pixButton]}
+                onPress={() => handlePayment('PIX')}
+              >
+                <Text style={styles.buttonIcon}>📱</Text>
+                <Text style={styles.buttonText}>PIX</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.paymentButton, styles.debitButton]}
-              onPress={() => handlePayment('Cartão de Débito')}
-            >
-              <Text style={styles.buttonIcon}>💳</Text>
-              <Text style={styles.buttonText}>Cartão de Débito</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.paymentButton, styles.debitButton]}
+                onPress={() => handlePayment('Cartão de Débito')}
+              >
+                <Text style={styles.buttonIcon}>💳</Text>
+                <Text style={styles.buttonText}>Cartão de Débito</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.paymentButton, styles.creditButton]}
-              onPress={() => handlePayment('Cartão de Crédito')}
-            >
-              <Text style={styles.buttonIcon}>💳</Text>
-              <Text style={styles.buttonText}>Cartão de Crédito</Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                style={[styles.paymentButton, styles.creditButton]}
+                onPress={() => handlePayment('Cartão de Crédito')}
+              >
+                <Text style={styles.buttonIcon}>💳</Text>
+                <Text style={styles.buttonText}>Cartão de Crédito</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           <TouchableOpacity
             style={styles.cancelButton}
             onPress={onClose}
+            disabled={loading}
           >
-            <Text style={styles.cancelButtonText}>Cancelar</Text>
+            <Text style={[styles.cancelButtonText, loading && styles.disabledText]}>
+              Cancelar
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -164,6 +252,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  loadingContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
+    paddingVertical: 40,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666',
+  },
   cancelButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
@@ -171,5 +269,8 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: '#666',
     fontSize: 16,
+  },
+  disabledText: {
+    color: '#ccc',
   },
 });
