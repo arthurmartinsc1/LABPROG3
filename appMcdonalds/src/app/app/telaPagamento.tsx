@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { API_URL } from '../../config/config'
 import {
   View,
@@ -10,6 +10,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { useCart } from '../context/cartContext';
+import { getUserProfile } from '@/src/services/api';
+import { router } from 'expo-router';
 
 interface TelaPagamentoProps {
   visible: boolean;
@@ -46,6 +48,44 @@ type PaymentMethod = 'PIX' | 'Cartão de Débito' | 'Cartão de Crédito';
 export default function TelaPagamento({ visible, onClose, total, cartItems }: TelaPagamentoProps) {
   const { clearCart } = useCart();
   const [loading, setLoading] = useState<boolean>(false);
+  const [user, setUser] = useState<any>(null);
+
+
+  const fetchProfile = useCallback(async () => {
+      try {
+        setLoading(true);
+        // Limpa o estado anterior antes de buscar novos dados
+        setUser(null);
+  
+        const data = await getUserProfile();
+        console.log('Dados do perfil carregados:', data); // Para debug
+        setUser(data);
+      } catch (err: any) {
+        console.error('Erro ao carregar perfil:', err);
+  
+        // Se o erro for relacionado à autenticação, redirecionar para login
+        if (err.message.includes('Sessão expirada') || err.message.includes('Token não encontrado')) {
+          Alert.alert(
+            "Sessão Expirada",
+            "Sua sessão expirou. Você será redirecionado para o login.",
+            [
+              {
+                text: "OK",
+                onPress: () => router.push("/")
+              }
+            ]
+          );
+        } else {
+          Alert.alert("Erro", "Não foi possível carregar seus dados.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    }, []);
+
+    useEffect(() => {
+        fetchProfile();
+      }, [fetchProfile]);
 
   const createOrder = async (items: OrderItem[], userId: number): Promise<ApiResponse> => {
     const response = await fetch(`${API_URL}/order`, {
@@ -77,11 +117,8 @@ export default function TelaPagamento({ visible, onClose, total, cartItems }: Te
         quantity: item.quantity
       }));
 
-      // IMPORTANTE: Substitua por um user_id real do usuário logado
-      const userId = 1; // Você deve pegar isso do contexto de autenticação
-
       // Faz a requisição para criar o pedido
-      const response = await createOrder(orderItems, userId);
+      const response = await createOrder(orderItems, user.id);
 
       Alert.alert(
         "Sucesso!",
