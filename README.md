@@ -178,6 +178,10 @@ SENHA_BD=sua-senha-do-banco
 ```env
 API_URL=http://localhost:3000
 ```
+### App Mobile (config.tsx)
+```config.tsx
+export const API_URL = "SEU_IP" + port
+```
 
 ## 🔮 Roadmap
 
