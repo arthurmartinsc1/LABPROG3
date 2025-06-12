@@ -1,7 +1,7 @@
 # Self Order
 # 🧾 Self Order
 
-![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
+![Status](https://img.shields.io/badge/status-finalizado-green)
 ![Docker](https://img.shields.io/badge/docker-suportado-blue)
 ![Frontend](https://img.shields.io/badge/frontend-React-blue)
 ![FrontendApp](https://img.shields.io/badge/frontendApp-ReactNative-purple)
